@@ -1,23 +1,53 @@
-import logo from './logo.svg';
 import './App.css';
+import { useReducer } from 'react';
 
 function App() {
+
+  let user = [
+    {
+      userController: ['Orginisation']
+    }
+  ]
+  let  controller = ['Orginisation', 'Miljönämnd']
+  const [activeControllers, dispatch] = useReducer((activeControllers, { type, value }) => {
+    switch (type) {
+      case 'add':
+        return [...activeControllers, value];
+      case 'remove':
+        return activeControllers.filter(index => index !== value);
+      default:
+        return activeControllers;
+    }
+  }, []);
+
+  // toogle check/uncheck category
+  const categoryToggle = (e) => {
+    if (e.target.checked) {
+      dispatch({ type: 'add', value: e.target.value });
+    } else if (!e.target.checked) {
+      dispatch({ type: 'remove', value: e.target.value });
+    }
+  };
+
+  const handleControllerChange = (e) => { 
+    categoryToggle(e); 
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+              {
+                controller.map((item, idx) => (
+                  <label key={idx} onChange={handleControllerChange}>
+                    <input
+                      type="checkbox"
+                      defaultChecked={user[0].userController.includes(item)}
+                      value={item}
+                    /> {item}
+                  </label>
+                ))
+              }
+              <h3>Valda</h3>
+      {activeControllers ? <p>{activeControllers.join(', ')}</p> : <p>Inget valt</p> }
     </div>
   );
 }
